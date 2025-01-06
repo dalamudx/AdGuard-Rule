@@ -68,35 +68,34 @@ public abstract class AbstractRuleThread implements Runnable {
                                 if (!domainExcludeList.contains(content.replace("^", ""))) {
                                     typeFileMap.getOrDefault(RuleType.DOMAIN, Collections.emptySet())
                                         .forEach(item -> Util.safePut(fileDataMap, item, line));
-                                    // log.debug("域名规则: {}", line);
+                                    log.debug("域名规则: {}", line);
                                 }
                             } else if (Util.validRule(content, RuleType.HOSTS)) {
                                 if (!domainExcludeList.contains(content.split(" ")[1])) {
                                     typeFileMap.getOrDefault(RuleType.HOSTS, Collections.emptySet())
                                             .forEach(item -> Util.safePut(fileDataMap, item, line));
-                                    // log.debug("Hosts规则: {}", line);
+                                    log.debug("Hosts规则: {}", line);
                                 }
                             } else if (Util.validRule(content, RuleType.MODIFY)) {
                                 if (Util.validRule(content, RuleType.REGEX)) {
-                                    log.info("content: "+content);
                                     typeFileMap.getOrDefault(RuleType.REGEX, Collections.emptySet())
                                             .forEach(item -> Util.safePut(fileDataMap, item, line));
-                                    // log.debug("正则规则: {}", line);
+                                    log.debug("正则规则: {}", line);
 
                                 } else {
 
                                     typeFileMap.getOrDefault(RuleType.MODIFY, Collections.emptySet())
                                             .forEach(item -> Util.safePut(fileDataMap, item, line));
-                                    // log.debug("修饰规则: {}", line);
+                                    log.debug("修饰规则: {}", line);
                                 }
                             } else {
                                 invalid.getAndSet(invalid.get() + 1);
-                                // log.debug("无效规则: {}", line);
+                                log.debug("无效规则: {}", line);
                             }
                         }
                     }else {
                         invalid.getAndSet(invalid.get() + 1);
-                        // log.debug("不是规则: {}", line);
+                        log.debug("不是规则: {}", line);
                     }
                 }
             });
