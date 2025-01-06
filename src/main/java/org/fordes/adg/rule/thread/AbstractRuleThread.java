@@ -61,10 +61,11 @@ public abstract class AbstractRuleThread implements Runnable {
                             filter.put(line);
 
                             if (Util.validRule(content, RuleType.DOMAIN)) {
-                                typeFileMap.getOrDefault(RuleType.DOMAIN, Collections.emptySet())
+                                if (! content.equals("jnn-pa.googleapis.com") || ! content.equals("in-addr.arpa")) {
+                                    typeFileMap.getOrDefault(RuleType.DOMAIN, Collections.emptySet())
                                         .forEach(item -> Util.safePut(fileDataMap, item, line));
-                                log.debug("域名规则: {}", line);
-
+                                    log.debug("域名规则: {}", line);
+                                }
                             } else if (Util.validRule(content, RuleType.HOSTS)) {
                                 typeFileMap.getOrDefault(RuleType.HOSTS, Collections.emptySet())
                                         .forEach(item -> Util.safePut(fileDataMap, item, line));
