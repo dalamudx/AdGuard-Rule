@@ -19,6 +19,8 @@ import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -52,6 +54,9 @@ public abstract class AbstractRuleThread implements Runnable {
         AtomicReference<Integer> invalid = new AtomicReference<>(0);
         Map<File, Set<String>> fileDataMap = MapUtil.newHashMap();
         try {
+            //patch exclude rules
+            String[] domainExclude = System.getenv("DOMAIN_EXCLUDE").split(",");
+            List<String> domainExcludeList = Arrays.asList(domainExclude);
             //按行读取并处理
             IoUtil.readLines(getContentStream(), charset, (LineHandler) line -> {
                 if (StrUtil.isNotBlank(line)) {
@@ -59,9 +64,8 @@ public abstract class AbstractRuleThread implements Runnable {
                     if (StrUtil.isNotBlank(content)) {
                         if (!filter.mightContain(line)) {
                             filter.put(line);
-
                             if (Util.validRule(content, RuleType.DOMAIN)) {
-                                if (! content.equals("jnn-pa.googleapis.com") || ! content.equals("in-addr.arpa")) {
+                                if (!domainExcludeList.contains(content.replace("^", ""))) {
                                     typeFileMap.getOrDefault(RuleType.DOMAIN, Collections.emptySet())
                                         .forEach(item -> Util.safePut(fileDataMap, item, line));
                                     log.debug("域名规则: {}", line);
