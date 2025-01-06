@@ -71,7 +71,7 @@ public abstract class AbstractRuleThread implements Runnable {
                                     log.debug("域名规则: {}", line);
                                 }
                             } else if (Util.validRule(content, RuleType.HOSTS)) {
-                                log.info("bbbbbbbb"+content);
+                                log.info("bbbbbbbb"+content.split(" ")[1]);
                                 typeFileMap.getOrDefault(RuleType.HOSTS, Collections.emptySet())
                                         .forEach(item -> Util.safePut(fileDataMap, item, line));
                                 log.debug("Hosts规则: {}", line);
