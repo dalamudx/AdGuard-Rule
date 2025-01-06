@@ -37,22 +37,22 @@ jobs:
 
       - name: Build with Maven
         run: |
-          cd ${{ GITHUB_WORKSPACE }}/main
+          cd ${{ github.workspace }}/main
           mvn -B package
 
       - name: Run Jar
         env:
           DOMAIN_EXCLUDE: ${{ vars.DOMAIN_EXCLUDE }}
         run: |
-          cd ${{ GITHUB_WORKSPACE }}/main
+          cd ${{ github.workspace }}/main
           java -jar ./target/adg-rule-1.0.0.jar
       
       - name: Prepare
         run: |
-          cd ${{ GITHUB_WORKSPACE }}/release
+          cd ${{ github.workspace }}/release
           git reset --hard 9dc2293efb4c49d4a6a53a22c34b61bbc99feaff
           mkdir rule
-          mv ${{ GITHUB_WORKSPACE }}/main/rule/* ${{ GITHUB_WORKSPACE }}/release/rule/
+          mv ${{ github.workspace }}/main/rule/* ${{ github.workspace }}/release/rule/
           git add .
           git commit -m "CI Updated at $(date +'%Y-%m-%d %H:%M:%S')" -a
       
@@ -60,7 +60,7 @@ jobs:
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          directory: ${{ GITHUB_WORKSPACE }}/release
+          directory: ${{ github.workspace }}/release
           branch: release
           force_with_lease: true
 
