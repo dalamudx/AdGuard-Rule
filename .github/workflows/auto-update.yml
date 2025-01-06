@@ -17,7 +17,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout main branch
+        uses: actions/checkout@v4
+        with:
+          path: main
+
+      - name: Checkout release branch
+        uses: actions/checkout@v4
+        with:
+          path: release
+          ref: release
 
       - name: Set up JDK 11
         uses: actions/setup-java@v3
@@ -27,44 +36,42 @@ jobs:
           cache: maven
 
       - name: Build with Maven
-        run: mvn -B package
+        run: |
+          cd ${{ GITHUB_WORKSPACE }}/main
+          mvn -B package
 
       - name: Run Jar
         env:
           DOMAIN_EXCLUDE: ${{ vars.DOMAIN_EXCLUDE }}
-        run:  java -jar ./target/adg-rule-1.0.0.jar
-      - name: test out
         run: |
-          cat rule/all.txt |grep "jnn-pa.googleapis.com\|in-addr.arpa"
+          cd ${{ GITHUB_WORKSPACE }}/main
+          java -jar ./target/adg-rule-1.0.0.jar
+      
+      - name: Prepare
+        run: |
+          cd ${{ GITHUB_WORKSPACE }}/release
+          git reset --hard 9dc2293efb4c49d4a6a53a22c34b61bbc99feaff
+          mkdir rule
+          mv ${{ GITHUB_WORKSPACE }}/main/rule/* ${{ GITHUB_WORKSPACE }}/release/rule/
+          git add .
+          git commit -m "CI Updated at $(date +'%Y-%m-%d %H:%M:%S')" -a
+      
+      - name: Release rules
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          directory: ${{ GITHUB_WORKSPACE }}/release
+          branch: release
+          force_with_lease: true
 
-      # - name: Commit Changes
-      #   id: commit
-      #   run: |
-      #     if [ -z "$(git status --porcelain)" ]; then 
-      #         exit 0
-      #     else
-      #       echo "status=success" >> $GITHUB_OUTPUT
-      #       git add .
-      #       git config --local user.email "xjianglin@gmail.com"
-      #       git config --local user.name "hululu1068"
-      #       git commit -m "CI Updated at $(date +'%Y-%m-%d %H:%M:%S')" -a
-      #     fi
-
-      # - name: GitHub Push
-      #   if: steps.commit.outputs.status == 'success' && !cancelled()
-      #   uses: ad-m/github-push-action@master
-      #   with:
-      #     github_token: ${{secrets.GITHUB_TOKEN}}
-      #     branch: ${{github.ref}}
-
-      # - name: Mirror Refresh
-      #   run: sleep 10 && curl 'https://purge.jsdelivr.net/gh/${{github.repository}}/rule'
+      - name: Mirror Refresh
+        run: sleep 10 && curl 'https://purge.jsdelivr.net/gh/${{github.repository}}@release/rule'
 
 
-      # - name: Delete Workflow Runs
-      #   uses: Mattraks/delete-workflow-runs@v2
-      #   with:
-      #     token: ${{ github.token }}
-      #     repository: ${{ github.repository }}
-      #     retain_days: 1
-      #     keep_minimum_runs: 1
+      - name: Delete Workflow Runs
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          retain_days: 1
+          keep_minimum_runs: 1
