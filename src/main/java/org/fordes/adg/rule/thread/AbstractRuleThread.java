@@ -73,7 +73,7 @@ public abstract class AbstractRuleThread implements Runnable {
                             } else if (Util.validRule(content, RuleType.HOSTS)) {
                                 if (!domainExcludeList.contains(content.split(" ")[1])) {
                                     typeFileMap.getOrDefault(RuleType.HOSTS, Collections.emptySet())
-                                            .forEach(item -> Util.safePut(fileDataMap, item, line));
+                                            .forEach(item -> Util.safePut(fileDataMap, item, line.replace("127.0.0.1", "0.0.0.0")));
                                     log.debug("Hosts规则: {}", line);
                                 }
                             } else if (Util.validRule(content, RuleType.MODIFY)) {
