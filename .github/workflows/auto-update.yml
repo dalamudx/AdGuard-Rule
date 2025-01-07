@@ -53,6 +53,8 @@ jobs:
           git reset --hard 9dc2293efb4c49d4a6a53a22c34b61bbc99feaff
           mkdir rule
           mv ${{ github.workspace }}/main/rule/* ${{ github.workspace }}/release/rule/
+          git config --global user.email ${{ secrets.EMAIL }}
+          git config --global user.name ${{ secrets.NAME }}
           git add .
           git commit -m "CI Updated at $(date +'%Y-%m-%d %H:%M:%S')" -a
       
