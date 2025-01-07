@@ -5,6 +5,20 @@
 </p>
 </div>
 
+<h2 id="a">🐱 仓库说明</h2>
+
+#### 与上游仓库[hululu1068/AdGuard-Rule](https://github.com/hululu1068/AdGuard-Rule)异同：
+
+- [x] 清理所有历史rule，解决仓库体积过大问题
+- [x] 通过仓库环境变量自动处理`域名规则`和`Hosts规则`规则，类似白名单
+- [x] 解决youtube预载以及PTR/RDNS问题
+- [x] 修改Action，发布rule至release分支，便于仓库维护
+
+#### Todo:
+- [ ] 补全`正则规则`和`修饰规则`白名单功能
+- [ ] 黑名单功能实现
+- [ ] `RemoteRuleThread`优化
+- [ ] 消除`本地规则`即`mylist.txt`，由黑名单、白名单代替
 
 <h2 id="a">📔 说明</h2>
 
