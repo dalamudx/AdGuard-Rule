@@ -19,6 +19,7 @@
 - [ ] 黑名单功能实现
 - [ ] `RemoteRuleThread`优化
 - [ ] 消除`本地规则`即`mylist.txt`，由黑名单、白名单代替
+- [ ] or 全部用python重做
 
 <h2 id="a">📔 说明</h2>
 
